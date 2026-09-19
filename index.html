@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mumbai Household Financial & Wealth Suite</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        input[type=range] { accent-color: #2563eb; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .tab-btn.active {
+            background-color: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen pb-12">
+
+    <header class="bg-slate-900 text-white py-5 shadow-lg border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-blue-600 rounded-xl shadow-md text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>
+                        <path d="M6 12H4a2 2 0 0 0-2 2v8h20v-8a2 2 0 0 0-2-2h-2"/>
+                        <path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Mumbai Family Wealth Suite</h1>
+                    <p class="text-slate-400 text-xs sm:text-sm">Cash Flow Planner, EMI Amortization & Investment Engines</p>
+                </div>
+            </div>
+
+            <!-- Tab Navigation Buttons -->
+            <nav class="flex flex-wrap justify-center bg-slate-800 p-1.5 rounded-xl border border-slate-700 text-xs sm:text-sm font-semibold gap-1">
+                <button onclick="switchTab('cashflow')" id="tab-cashflow" class="tab-btn active px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    Cash Flow
+                </button>
+                <button onclick="switchTab('amortization')" id="tab-amortization" class="tab-btn px-3.5 py-2 text-slate-300 hover:text-white rounded-lg transition-all flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+                    Amortization
+                </button>
+                <button onclick="switchTab('sip')" id="tab-sip" class="tab-btn px-3.5 py-2 text-slate-300 hover:text-white rounded-lg transition-all flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    SIP Calculator
+                </button>
+                <button onclick="switchTab('lumpsum')" id="tab-lumpsum" class="tab-btn px-3.5 py-2 text-slate-300 hover:text-white rounded-lg transition-all flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>
+                    Lump Sum
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ================= TAB 1: CASH FLOW PLANNER ================= -->
+        <section id="sec-cashflow" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Left Input Panel -->
+                <div class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 space-y-6">
+                    <div class="flex items-center justify-between border-b pb-3 border-slate-100">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>
+                            Household Income & Outflows
+                        </h2>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md font-medium">Post-Tax (₹)</span>
+                    </div>
+
+                    <!-- Income Controls -->
+                    <div class="space-y-3 bg-blue-50/60 p-4 rounded-xl border border-blue-100">
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-bold uppercase tracking-wider text-blue-900 flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3v4a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V7"/><path d="M18 11h.01"/></svg>
+                                Joint Net Monthly Income
+                            </label>
+                            <span id="incomeVal" class="text-sm font-black text-blue-700 bg-white px-2.5 py-1 rounded-md shadow-sm border border-blue-100">₹3,50,000</span>
+                        </div>
+                        <input type="range" id="income" min="150000" max="1000000" step="10000" value="350000" class="w-full h-2 bg-blue-200 rounded-lg cursor-pointer">
+
+                        <div class="flex justify-between items-center pt-2 border-t border-blue-100">
+                            <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 4.8 0 0 1 12 8a4.8 4.8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
+                                Annual Bonus (Post-Tax)
+                            </label>
+                            <input type="number" id="annualBonus" value="400000" step="25000" class="w-32 text-xs font-bold border rounded-lg px-2.5 py-1 text-right focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Loans Section -->
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7 12 2"/></svg>
+                            Loan Liabilities
+                        </h3>
+
+                        <!-- Home Loan Card -->
+                        <div class="space-y-2 bg-indigo-50/50 p-3.5 rounded-xl border border-indigo-100">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-indigo-900 flex items-center gap-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                    Home Loan
+                                </span>
+                                <span id="hlEmiBadge" class="text-xs font-extrabold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded">₹0/mo</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div><label class="text-[10px] font-semibold text-slate-500 uppercase">Balance (₹)</label><input type="number" id="hlPrincipal" value="6000000" class="w-full text-xs font-semibold border rounded-lg px-2 py-1 outline-none"></div>
+                                <div><label class="text-[10px] font-semibold text-slate-500 uppercase">Rate (%)</label><input type="number" id="hlRate" step="0.1" value="7.1" class="w-full text-xs font-semibold border rounded-lg px-2 py-1 outline-none"></div>
+                                <div><label class="text-[10px] font-semibold text-slate-500 uppercase">Tenure (Yrs)</label><input type="number" id="hlTenure" value="20" class="w-full text-xs font-semibold border rounded-lg px-2 py-1 outline-none"></div>
+                            </div>
+                        </div>
+
+                        <!-- Car Loan Card -->
+                        <div class="space-y-2 bg-cyan-50/50 p-3.5 rounded-xl border border-cyan-100">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-cyan-900 flex items-center gap-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-cyan-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H7c-.7 0-1.3.3-1.8.7C4.3 8.6 3 10 3 10s-2.7.6-2.5 1.1C.3 11.3 0 12.1 0 13v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                                    Car Loan
+                                </span>
+                                <span id="clEmiBadge" class="text-xs font-extrabold text-cyan-700 bg-cyan-100 px-2 py-0.5 rounded">₹0/mo</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div><label class="text-[10px] font-semibold text-slate-500 uppercase">Balance (₹)</label><input type="number" id="clPrincipal" value="800000" class="w-full text-xs font-semibold border rounded-lg px-2 py-1 outline-none"></div>
+                                <div><label class="text-[10px] font-semibold text-slate-500 uppercase">Rate (%)</label><input type="number" id="clRate" step="0.1" value="7.9" class="w-full text-xs font-semibold border rounded-lg px-2 py-1 outline-none"></div>
+                                <div><label class="text-[10px] font-semibold text-slate-500 uppercase">Tenure (Yrs)</label><input type="number" id="clTenure" value="5" class="w-full text-xs font-semibold border rounded-lg px-2 py-1 outline-none"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Annual Commitments Amortized -->
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                            Amortized Annual Expenses
+                        </h3>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="bg-amber-50/50 p-2.5 rounded-xl border border-amber-100 space-y-1">
+                                <label class="text-[10px] font-bold text-amber-900 flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                                    School
+                                </label>
+                                <input type="number" id="schoolAnnual" value="200000" class="w-full text-xs font-semibold border rounded-lg px-2 py-1 outline-none">
+                            </div>
+                            <div class="bg-rose-50/50 p-2.5 rounded-xl border border-rose-100 space-y-1">
+                                <label class="text-[10px] font-bold text-rose-900 flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                                    Insurance
+                                </label>
+                                <input type="number" id="insurAnnual" value="100000" class="w-full text-xs font-semibold border rounded-lg px-2 py-1 outline-none">
+                            </div>
+                            <div class="bg-purple-50/50 p-2.5 rounded-xl border border-purple-100 space-y-1">
+                                <label class="text-[10px] font-bold text-purple-900 flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.7 5.2c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+                                    Vacation
+                                </label>
+                                <input type="number" id="vacAnnual" value="200000" class="w-full text-xs font-semibold border rounded-lg px-2 py-1 outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Living Expenses Slider -->
+                    <div class="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                Monthly Household Operating Expenses
+                            </label>
+                            <span id="livingVal" class="text-xs font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200">₹90,000</span>
+                        </div>
+                        <input type="range" id="living" min="30000" max="250000" step="5000" value="90000" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Right Dashboard Panel -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Monthly EMI</p>
+                                    <p id="totalEmiText" class="text-xl font-black text-slate-900 mt-1">₹0</p>
+                                </div>
+                                <div class="p-2 bg-blue-50 text-blue-600 rounded-xl">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                                </div>
+                            </div>
+                            <p id="emiRatioText" class="text-xs font-medium text-slate-500 mt-2">0% of income</p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Annual Reserve/Mo</p>
+                                    <p id="annualAmortText" class="text-xl font-black text-slate-900 mt-1">₹0</p>
+                                </div>
+                                <div class="p-2 bg-amber-50 text-amber-600 rounded-xl">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-3.5c1 0 2.5 0 3.5-1.5 1.5-2.2 1.5-5 0-7-1-1.5-2.5-1.5-2.5-1.5Z"/><circle cx="16" cy="11" r="1"/></svg>
+                                </div>
+                            </div>
+                            <p class="text-xs font-medium text-slate-500 mt-2">Fees + Ins + Vacation</p>
+                        </div>
+
+                        <div class="bg-emerald-600 text-white p-4 rounded-2xl shadow-md">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-[10px] font-bold text-emerald-200 uppercase tracking-wider">Monthly Surplus</p>
+                                    <p id="surplusText" class="text-2xl font-black mt-1">₹0</p>
+                                </div>
+                                <div class="p-2 bg-emerald-500/50 text-white rounded-xl">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                                </div>
+                            </div>
+                            <p id="savingsRatioText" class="text-xs font-semibold text-emerald-100 mt-2">0% savings rate</p>
+                        </div>
+                    </div>
+
+                    <!-- Doughnut Chart Canvas -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                            Monthly Allocation Breakdown
+                        </h3>
+                        <div class="h-64 relative">
+                            <canvas id="budgetChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= TAB 2: AMORTIZATION SCHEDULE ================= -->
+        <section id="sec-amortization" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                            Loan Amortization & Prepayment Simulator
+                        </h2>
+                        <p class="text-xs text-slate-500">View payment schedules and simulate extra prepayments to slash tenure and interest.</p>
+                    </div>
+
+                    <!-- Loan Selector Switcher -->
+                    <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
+                        <button id="btn-select-hl" onclick="selectAmortLoan('home')" class="px-4 py-2 rounded-lg bg-indigo-600 text-white shadow-sm transition-all">Home Loan (7.1%)</button>
+                        <button id="btn-select-cl" onclick="selectAmortLoan('car')" class="px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all">Car Loan (7.9%)</button>
+                    </div>
+                </div>
+
+                <!-- Prepayment Controls Card -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 uppercase flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            Extra Monthly Prepayment
+                        </label>
+                        <input type="number" id="extraMonthly" value="0" step="1000" class="w-full text-xs font-semibold border rounded-lg px-3 py-1.5 mt-1 outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 uppercase flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/></svg>
+                            Extra Annual Prepayment
+                        </label>
+                        <input type="number" id="extraAnnual" value="0" step="10000" class="w-full text-xs font-semibold border rounded-lg px-3 py-1.5 mt-1 outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div class="flex items-center justify-end gap-3 pt-2 sm:pt-0">
+                        <div class="text-right">
+                            <p class="text-[10px] uppercase font-bold text-slate-400">Interest Saved</p>
+                            <p id="amortInterestSaved" class="text-sm font-black text-emerald-600">₹0</p>
+                        </div>
+                        <div class="text-right border-l pl-3 border-slate-200">
+                            <p class="text-[10px] uppercase font-bold text-slate-400">Tenure Reduced</p>
+                            <p id="amortTenureSaved" class="text-sm font-black text-indigo-600">0 Mos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amortization Table -->
+                <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold uppercase border-b border-slate-200">
+                                <th class="p-3">Year / Month</th>
+                                <th class="p-3 text-right">Payment (₹)</th>
+                                <th class="p-3 text-right">Principal Paid (₹)</th>
+                                <th class="p-3 text-right">Interest Paid (₹)</th>
+                                <th class="p-3 text-right">Prepayment (₹)</th>
+                                <th class="p-3 text-right">Remaining Balance (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="amortTableBody" class="divide-y divide-slate-100 font-medium">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= TAB 3: SIP CALCULATOR ================= -->
+        <section id="sec-sip" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 border-b pb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                        SIP Parameters
+                    </h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-slate-700 uppercase">Monthly SIP Amount</span>
+                                <span id="sipAmountVal" class="text-emerald-700 font-extrabold">₹1,00,000</span>
+                            </div>
+                            <input type="range" id="sipAmount" min="5000" max="300000" step="5000" value="100000" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-slate-700 uppercase">Expected Rate of Return (%)</span>
+                                <span id="sipRateVal" class="text-emerald-700 font-extrabold">12.0%</span>
+                            </div>
+                            <input type="range" id="sipRate" min="5" max="25" step="0.5" value="12" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-slate-700 uppercase">Time Horizon (Years)</span>
+                                <span id="sipTenureVal" class="text-emerald-700 font-extrabold">15 Yrs</span>
+                            </div>
+                            <input type="range" id="sipTenure" min="1" max="35" step="1" value="15" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Total Invested</p>
+                            <p id="sipInvestedText" class="text-lg font-black text-slate-800 mt-1">₹0</p>
+                        </div>
+                        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                            <p class="text-[10px] font-bold text-emerald-800 uppercase">Est. Wealth Returns</p>
+                            <p id="sipGainText" class="text-lg font-black text-emerald-700 mt-1">₹0</p>
+                        </div>
+                        <div class="bg-emerald-600 text-white p-4 rounded-xl shadow-md">
+                            <p class="text-[10px] font-bold text-emerald-200 uppercase">Total Future Corpus</p>
+                            <p id="sipTotalText" class="text-xl font-black mt-1">₹0</p>
+                        </div>
+                    </div>
+
+                    <div class="h-64 relative">
+                        <canvas id="sipChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ================= TAB 4: LUMP SUM CALCULATOR ================= -->
+        <section id="sec-lumpsum" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 border-b pb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>
+                        Lump Sum Parameters
+                    </h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-slate-700 uppercase">Initial One-Time Investment</span>
+                                <span id="lsAmountVal" class="text-purple-700 font-extrabold">₹15,00,000</span>
+                            </div>
+                            <input type="range" id="lsAmount" min="50000" max="5000000" step="50000" value="1500000" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-slate-700 uppercase">Expected Return Rate (%)</span>
+                                <span id="lsRateVal" class="text-purple-700 font-extrabold">12.0%</span>
+                            </div>
+                            <input type="range" id="lsRate" min="5" max="25" step="0.5" value="12" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-slate-700 uppercase">Investment Tenure (Years)</span>
+                                <span id="lsTenureVal" class="text-purple-700 font-extrabold">10 Yrs</span>
+                            </div>
+                            <input type="range" id="lsTenure" min="1" max="30" step="1" value="10" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Initial Deposit</p>
+                            <p id="lsInvestedText" class="text-lg font-black text-slate-800 mt-1">₹0</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-xl border border-purple-100">
+                            <p class="text-[10px] font-bold text-purple-800 uppercase">Compounded Growth</p>
+                            <p id="lsGainText" class="text-lg font-black text-purple-700 mt-1">₹0</p>
+                        </div>
+                        <div class="bg-purple-700 text-white p-4 rounded-xl shadow-md">
+                            <p class="text-[10px] font-bold text-purple-200 uppercase">Maturity Corpus</p>
+                            <p id="lsTotalText" class="text-xl font-black mt-1">₹0</p>
+                        </div>
+                    </div>
+
+                    <div class="h-64 relative">
+                        <canvas id="lsChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Number Formatting (Indian System)
+        function formatINR(val) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(val);
+        }
+
+        // Standard EMI Calculator
+        function calculateEMI(p, r, nYears) {
+            if (!p || p <= 0) return 0;
+            let rMonthly = (r / 12) / 100;
+            let nMonths = nYears * 12;
+            let emi = p * rMonthly * (Math.pow(1 + rMonthly, nMonths) / (Math.pow(1 + rMonthly, nMonths) - 1));
+            return isNaN(emi) ? 0 : emi;
+        }
+
+        // Tab Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active', 'bg-blue-600', 'text-white'));
+            
+            document.getElementById('sec-' + tabId).classList.remove('hidden');
+            const btn = document.getElementById('tab-' + tabId);
+            btn.classList.add('active');
+
+            if (tabId === 'amortization') renderAmortizationTable();
+            if (tabId === 'sip') updateSIP();
+            if (tabId === 'lumpsum') updateLumpSum();
+        }
+
+        // ================= CASH FLOW LOGIC =================
+        let budgetChart;
+        function initBudgetChart() {
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+            budgetChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Home Loan EMI', 'Car Loan EMI', 'Annual Outflows', 'Living Expenses', 'Net Monthly Surplus'],
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: ['#4f46e5', '#0891b2', '#f59e0b', '#64748b', '#10b981'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
+                    cutout: '68%'
+                }
+            });
+        }
+
+        function updateCashFlow() {
+            const income = parseFloat(document.getElementById('income').value);
+            const hlP = parseFloat(document.getElementById('hlPrincipal').value) || 0;
+            const hlR = parseFloat(document.getElementById('hlRate').value) || 0;
+            const hlN = parseFloat(document.getElementById('hlTenure').value) || 0;
+
+            const clP = parseFloat(document.getElementById('clPrincipal').value) || 0;
+            const clR = parseFloat(document.getElementById('clRate').value) || 0;
+            const clN = parseFloat(document.getElementById('clTenure').value) || 0;
+
+            const school = parseFloat(document.getElementById('schoolAnnual').value) || 0;
+            const insurance = parseFloat(document.getElementById('insurAnnual').value) || 0;
+            const vacation = parseFloat(document.getElementById('vacAnnual').value) || 0;
+            const living = parseFloat(document.getElementById('living').value);
+
+            const homeEmi = calculateEMI(hlP, hlR, hlN);
+            const carEmi = calculateEMI(clP, clR, clN);
+            const totalEmi = homeEmi + carEmi;
+            const annualAmort = (school + insurance + vacation) / 12;
+            const surplus = income - totalEmi - annualAmort - living;
+
+            document.getElementById('incomeVal').innerText = formatINR(income);
+            document.getElementById('livingVal').innerText = formatINR(living);
+            document.getElementById('hlEmiBadge').innerText = formatINR(homeEmi) + "/mo";
+            document.getElementById('clEmiBadge').innerText = formatINR(carEmi) + "/mo";
+
+            document.getElementById('totalEmiText').innerText = formatINR(totalEmi);
+            document.getElementById('emiRatioText').innerText = ((totalEmi / income) * 100).toFixed(1) + "% of net income";
+            document.getElementById('annualAmortText').innerText = formatINR(annualAmort);
+            document.getElementById('surplusText').innerText = formatINR(surplus);
+            document.getElementById('savingsRatioText').innerText = ((surplus / income) * 100).toFixed(1) + "% monthly savings rate";
+
+            if (budgetChart) {
+                budgetChart.data.datasets[0].data = [
+                    Math.round(homeEmi), Math.round(carEmi), Math.round(annualAmort), Math.round(living), Math.max(0, Math.round(surplus))
+                ];
+                budgetChart.update();
+            }
+        }
+
+        // ================= AMORTIZATION & PREPAYMENT LOGIC =================
+        let currentAmortLoan = 'home';
+        function selectAmortLoan(type) {
+            currentAmortLoan = type;
+            const btnHl = document.getElementById('btn-select-hl');
+            const btnCl = document.getElementById('btn-select-cl');
+
+            if (type === 'home') {
+                btnHl.className = 'px-4 py-2 rounded-lg bg-indigo-600 text-white shadow-sm transition-all';
+                btnCl.className = 'px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all';
+            } else {
+                btnCl.className = 'px-4 py-2 rounded-lg bg-cyan-600 text-white shadow-sm transition-all';
+                btnHl.className = 'px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all';
+            }
+            renderAmortizationTable();
+        }
+
+        function renderAmortizationTable() {
+            let p, r, nYears;
+            if (currentAmortLoan === 'home') {
+                p = parseFloat(document.getElementById('hlPrincipal').value) || 0;
+                r = parseFloat(document.getElementById('hlRate').value) || 0;
+                nYears = parseFloat(document.getElementById('hlTenure').value) || 0;
+            } else {
+                p = parseFloat(document.getElementById('clPrincipal').value) || 0;
+                r = parseFloat(document.getElementById('clRate').value) || 0;
+                nYears = parseFloat(document.getElementById('clTenure').value) || 0;
+            }
+
+            const extraM = parseFloat(document.getElementById('extraMonthly').value) || 0;
+            const extraA = parseFloat(document.getElementById('extraAnnual').value) || 0;
+
+            const baseEmi = calculateEMI(p, r, nYears);
+            const rMonthly = (r / 12) / 100;
+            
+            let balance = p;
+            let totalInterestPaid = 0;
+            let month = 0;
+            const tbody = document.getElementById('amortTableBody');
+            tbody.innerHTML = '';
+
+            let yearPrincipal = 0, yearInterest = 0, yearPayment = 0, yearPrepay = 0;
+
+            while (balance > 0 && month < (nYears * 12 + 60)) {
+                month++;
+                let interestForMonth = balance * rMonthly;
+                let principalForMonth = baseEmi - interestForMonth;
+
+                if (balance < principalForMonth) principalForMonth = balance;
+
+                let extra = extraM + (month % 12 === 0 ? extraA : 0);
+                if (balance < (principalForMonth + extra)) {
+                    extra = Math.max(0, balance - principalForMonth);
+                }
+
+                balance = balance - principalForMonth - extra;
+                totalInterestPaid += interestForMonth;
+
+                yearPrincipal += principalForMonth;
+                yearInterest += interestForMonth;
+                yearPayment += (principalForMonth + interestForMonth);
+                yearPrepay += extra;
+
+                // Render Yearly Summary Rows
+                if (month % 12 === 0 || balance <= 0) {
+                    let yearNum = Math.ceil(month / 12);
+                    let tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 border-b border-slate-100";
+                    tr.innerHTML = `
+                        <td class="p-3 font-bold text-slate-800">Year ${yearNum}</td>
+                        <td class="p-3 text-right font-semibold">${formatINR(yearPayment)}</td>
+                        <td class="p-3 text-right text-indigo-600 font-semibold">${formatINR(yearPrincipal)}</td>
+                        <td class="p-3 text-right text-rose-600 font-semibold">${formatINR(yearInterest)}</td>
+                        <td class="p-3 text-right text-emerald-600 font-semibold">${formatINR(yearPrepay)}</td>
+                        <td class="p-3 text-right font-bold text-slate-900">${formatINR(Math.max(0, balance))}</td>
+                    `;
+                    tbody.appendChild(tr);
+
+                    yearPrincipal = 0; yearInterest = 0; yearPayment = 0; yearPrepay = 0;
+                }
+            }
+
+            // Standard Baseline without prepayments for interest/tenure comparison
+            let baseTotalInterest = (baseEmi * nYears * 12) - p;
+            let interestSaved = Math.max(0, baseTotalInterest - totalInterestPaid);
+            let tenureReduced = Math.max(0, (nYears * 12) - month);
+
+            document.getElementById('amortInterestSaved').innerText = formatINR(interestSaved);
+            document.getElementById('amortTenureSaved').innerText = `${tenureReduced} Mos`;
+        }
+
+
+        // ================= SIP LOGIC =================
+        let sipChart;
+        function updateSIP() {
+            const P = parseFloat(document.getElementById('sipAmount').value);
+            const rAnnual = parseFloat(document.getElementById('sipRate').value);
+            const nYears = parseFloat(document.getElementById('sipTenure').value);
+
+            document.getElementById('sipAmountVal').innerText = formatINR(P);
+            document.getElementById('sipRateVal').innerText = rAnnual.toFixed(1) + "%";
+            document.getElementById('sipTenureVal').innerText = nYears + " Yrs";
+
+            const r = (rAnnual / 12) / 100;
+            const n = nYears * 12;
+
+            const totalInvested = P * n;
+            const futureValue = P * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+            const gain = futureValue - totalInvested;
+
+            document.getElementById('sipInvestedText').innerText = formatINR(totalInvested);
+            document.getElementById('sipGainText').innerText = formatINR(gain);
+            document.getElementById('sipTotalText').innerText = formatINR(futureValue);
+
+            if (!sipChart) {
+                const ctx = document.getElementById('sipChart').getContext('2d');
+                sipChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Invested Capital', 'Estimated Wealth Gain'],
+                        datasets: [{
+                            data: [totalInvested, gain],
+                            backgroundColor: ['#64748b', '#10b981'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
+                });
+            } else {
+                sipChart.data.datasets[0].data = [Math.round(totalInvested), Math.round(gain)];
+                sipChart.update();
+            }
+        }
+
+
+        // ================= LUMP SUM LOGIC =================
+        let lsChart;
+        function updateLumpSum() {
+            const P = parseFloat(document.getElementById('lsAmount').value);
+            const rAnnual = parseFloat(document.getElementById('lsRate').value);
+            const nYears = parseFloat(document.getElementById('lsTenure').value);
+
+            document.getElementById('lsAmountVal').innerText = formatINR(P);
+            document.getElementById('lsRateVal').innerText = rAnnual.toFixed(1) + "%";
+            document.getElementById('lsTenureVal').innerText = nYears + " Yrs";
+
+            const futureValue = P * Math.pow(1 + (rAnnual / 100), nYears);
+            const gain = futureValue - P;
+
+            document.getElementById('lsInvestedText').innerText = formatINR(P);
+            document.getElementById('lsGainText').innerText = formatINR(gain);
+            document.getElementById('lsTotalText').innerText = formatINR(futureValue);
+
+            if (!lsChart) {
+                const ctx = document.getElementById('lsChart').getContext('2d');
+                lsChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Initial Deposit', 'Compounded Growth'],
+                        datasets: [{
+                            data: [P, gain],
+                            backgroundColor: ['#64748b', '#9333ea'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
+                });
+            } else {
+                lsChart.data.datasets[0].data = [Math.round(P), Math.round(gain)];
+                lsChart.update();
+            }
+        }
+
+
+        // Attach listeners across all sliders & inputs
+        document.querySelectorAll('#sec-cashflow input').forEach(inp => inp.addEventListener('input', updateCashFlow));
+        document.querySelectorAll('#sec-amortization input').forEach(inp => inp.addEventListener('input', renderAmortizationTable));
+        document.querySelectorAll('#sec-sip input').forEach(inp => inp.addEventListener('input', updateSIP));
+        document.querySelectorAll('#sec-lumpsum input').forEach(inp => inp.addEventListener('input', updateLumpSum));
+
+        // Initialize on window load
+        window.onload = function() {
+            initBudgetChart();
+            updateCashFlow();
+        };
+    </script>
+</body>
+</html>
